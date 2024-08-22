@@ -40,7 +40,6 @@ def home():
 def predict(data: Input_Data):
     import pandas as pd
     import joblib
-    # from sklearn.ensemble import RandomForestRegressor
     dict_data = {
         'carat': data.carat,
         'depth': data.depth,
