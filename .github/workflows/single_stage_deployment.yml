@@ -1,5 +1,6 @@
 name: single-stage-deployment
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
