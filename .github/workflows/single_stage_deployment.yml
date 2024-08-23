@@ -1,0 +1,30 @@
+name: single-stage-deployment
+on:
+  push:
+    branches:
+      - main
+      - uat
+      - prod
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4.1.7
+    - uses: Azure/login@v2.0.0
+      with:
+        creds: ${{SECRETS.hjdk}}
+        auth-type: SERVICE_PRINCIPAL
+    - run:
+        gzip -rvf ./application
+    - run: |
+        az webapp config appsettings set --resource-group $RESOURCE_GROUP_NAME --name $APP_SERVICE_NAME --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
+        az webapp config appsettings set --resource-group $RESOURCE_GROUP_NAME --name $APP_SERVICE_NAME --settings PORT=10040
+        az webapp deploy --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --src-path application.zip
+        az webapp config set --startup-file "gunicorn -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:10040 app:app" --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME
+        az webapp restart --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME
+    - run: |
+        az webapp log config --web-server-logging filesystem --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME
+        az webapp log tail --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME
+        
+        
+        
