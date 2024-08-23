@@ -20,7 +20,7 @@ jobs:
         creds: ${{SECRETS.AZURE_SERVICE_PRINCIPAL_CRED}}
         auth-type: SERVICE_PRINCIPAL
     - run:
-        gzip -c -rvf model.joblib app.py requiremnets.txt >> application.gz
+        gzip -c -rvf model.joblib app.py requirements.txt >> application.gz
     - run: |
         az webapp config appsettings set --resource-group $RESOURCE_GROUP_NAME --name $APP_SERVICE_NAME --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
         az webapp config appsettings set --resource-group $RESOURCE_GROUP_NAME --name $APP_SERVICE_NAME --settings PORT=10040
