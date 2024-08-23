@@ -25,7 +25,7 @@ jobs:
         az webapp config appsettings set --resource-group ${{vars.RESOURCE_GROUP_NAME}} --name "${{vars.APP_SERVICE_NAME}}" --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
         az webapp config appsettings set --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --name ${{vars.APP_SERVICE_NAME}} --settings PORT=10040
     - run: |
-        ls
+        ls -al
         pwd
         az webapp deploy --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --src-path ./application.zip --type zip
     - run: |
