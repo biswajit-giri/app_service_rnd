@@ -34,7 +34,7 @@ class Input_Data(BaseModel):
 
 @app.get("/")
 def home():
-    return "its a Home Page"
+    return "its a Home Page from CI/CD deployment"
 
 @app.post("/predict")
 def predict(data: Input_Data):
