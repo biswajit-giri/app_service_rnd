@@ -5,6 +5,10 @@ on:
       - main
       - uat
       - prod
+    paths:
+      - model.joblib
+      - app.py
+      - requirements.txt
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,11 +19,11 @@ jobs:
         creds: ${{SECRETS.AZURE_SERVICE_PRINCIPAL_CRED}}
         auth-type: SERVICE_PRINCIPAL
     - run:
-        gzip -rvf ./application
+        gzip -c -rvf model.joblib app.py requiremnets.txt >> application.gz
     - run: |
         az webapp config appsettings set --resource-group $RESOURCE_GROUP_NAME --name $APP_SERVICE_NAME --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
         az webapp config appsettings set --resource-group $RESOURCE_GROUP_NAME --name $APP_SERVICE_NAME --settings PORT=10040
-        az webapp deploy --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --src-path application.zip
+        az webapp deploy --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --src-path application.gz
         az webapp config set --startup-file "gunicorn -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:10040 app:app" --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME
         az webapp restart --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME
     - run: |
