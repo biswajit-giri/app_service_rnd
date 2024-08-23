@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v4.1.7
     - uses: Azure/login@v2.0.0
       with:
-        creds: ${{SECRETS.hjdk}}
+        creds: ${{SECRETS.AZURE_SERVICE_PRINCIPAL_CRED}}
         auth-type: SERVICE_PRINCIPAL
     - run:
         gzip -rvf ./application
