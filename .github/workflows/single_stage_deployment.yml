@@ -22,7 +22,7 @@ jobs:
     - run:
         gzip -c -rvf model.joblib app.py requirements.txt >> application.gz
     - run: |
-        az webapp config appsettings set --resource-group ${{vars.RESOURCE_GROUP_NAME}} --name ${{vars.APP_SERVICE_NAME}} --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
+        az webapp config appsettings set --resource-group ${{vars.RESOURCE_GROUP_NAME}} --name "${{vars.APP_SERVICE_NAME}}" --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
         az webapp config appsettings set --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --name${{vars.APP_SERVICE_NAME}} --settings PORT=10040
         az webapp deploy --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}E --src-path application.gz
         az webapp config set --startup-file "gunicorn -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:10040 app:app" --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
