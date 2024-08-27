@@ -7,9 +7,7 @@ on:
       - uat
       - prod
     paths:
-      - model.joblib
-      - app.py
-      - requirements.txt
+      - 'backend/**'
 jobs:
   deploy:
     runs-on: ubuntu-latest
