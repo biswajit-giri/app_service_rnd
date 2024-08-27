@@ -1,0 +1,9 @@
+name: single-stage-ui
+on:
+  push:
+    branches:
+      - main
+      - uat
+      - prod
+    paths:
+      - frontend/**
