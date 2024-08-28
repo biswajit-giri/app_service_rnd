@@ -12,6 +12,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./frontend
     steps:
     - uses: actions/checkout@v4.1.7
       with:
@@ -21,8 +25,6 @@ jobs:
       with:
         creds: ${{SECRETS.AZURE_SERVICE_PRINCIPAL_CRED}}
         auth-type: SERVICE_PRINCIPAL
-    - run: |
-        cd frontend
     - uses: actions/setup-node@v4.0.3
       with:
         node-version: v20.17.0
