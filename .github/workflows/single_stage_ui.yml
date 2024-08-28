@@ -20,17 +20,18 @@ jobs:
       with:
         creds: ${{SECRETS.AZURE_SERVICE_PRINCIPAL_CRED}}
         auth-type: SERVICE_PRINCIPAL
+    - uses: actions/setup-node@v4.0.3
+      with:
+        node-version: v20.17.0
+    - run: |
+        npm install
+    - run: |
+        npm run build
     - run:
-        zip -rv  application.zip model.joblib app.py requirements.txt
+        zip -rv  build.zip ./build/**
     - run: |
-        az webapp config appsettings set --resource-group ${{vars.RESOURCE_GROUP_NAME}} --name "${{vars.APP_SERVICE_NAME}}" --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
-        az webapp config appsettings set --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --name ${{vars.APP_SERVICE_NAME}} --settings PORT=10040
+        az webapp config appsettings set --resource-group ${{vars.RESOURCE_GROUP_NAME}} --name "${{vars.APP_SERVICE_UI_NAME}}" --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false
     - run: |
-        ls -al
-        pwd
-        az webapp deploy --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --src-path ./application.zip --type zip
+        az webapp deploy --name ${{vars.APP_SERVICE_UI_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --src-path ./build.zip --type zip
     - run: |
-        az webapp config set --startup-file "gunicorn -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:10040 app:app" --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
-        az webapp restart --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
-    - run: |
-        az webapp log config --web-server-logging filesystem --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
+        az webapp log config --web-server-logging filesystem --name ${{vars.APP_SERVICE_UI_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
