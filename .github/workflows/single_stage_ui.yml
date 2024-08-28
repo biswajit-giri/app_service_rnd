@@ -21,6 +21,9 @@ jobs:
       with:
         creds: ${{SECRETS.AZURE_SERVICE_PRINCIPAL_CRED}}
         auth-type: SERVICE_PRINCIPAL
+    - run: |
+        ls
+        pwd
     - uses: actions/setup-node@v4.0.3
       with:
         node-version: v20.17.0
