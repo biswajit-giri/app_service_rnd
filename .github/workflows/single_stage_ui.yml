@@ -37,7 +37,7 @@ jobs:
     - run: |
         npm run build
     - run:
-        zip -rv  build.zip ./build/**
+        zip -rv  build.zip ./build package.json
     - run: |
         az webapp config appsettings set --resource-group ${{vars.RESOURCE_GROUP_NAME}} --name "${{vars.APP_SERVICE_UI_NAME}}" --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
     - run: |
