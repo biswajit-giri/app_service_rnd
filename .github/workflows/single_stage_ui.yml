@@ -36,6 +36,9 @@ jobs:
         npm install
     - run: |
         npm run build
+    - run: |
+        ls
+        pwd
     - run:
         zip -rv  build.zip ./build package.json
     - run: |
