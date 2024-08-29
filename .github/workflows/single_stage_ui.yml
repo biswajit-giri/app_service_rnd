@@ -8,7 +8,7 @@ on:
       - prod
     paths:
       - frontend/**
-      - .github/workflows/single_stage_ui.yaml
+      - .github/workflows/single_stage_ui*
 
 jobs:
   deploy:
