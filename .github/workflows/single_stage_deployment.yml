@@ -10,9 +10,16 @@ on:
       - backend/**
 jobs:
   deploy:
+    defaults: 
+      run:
+        shell: bash
+        working-directory: ./backend
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4.1.7
+      with:
+        sparse-checkout: backend
+        sparse-checkout-cone-mode: true
     - uses: Azure/login@v2.0.0
       with:
         creds: ${{SECRETS.AZURE_SERVICE_PRINCIPAL_CRED}}
@@ -22,13 +29,9 @@ jobs:
     - run: |
         az webapp config appsettings set --resource-group ${{vars.RESOURCE_GROUP_NAME}} --name "${{vars.APP_SERVICE_NAME}}" --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
         az webapp config appsettings set --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --name ${{vars.APP_SERVICE_NAME}} --settings PORT=10040
-    - run: |
-        ls -al
-        pwd
-        az webapp deploy --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --src-path ./application.zip --type zip
-    - run: |
         az webapp config set --startup-file "gunicorn -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:10040 app:app" --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
-        az webapp restart --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
+    - run: |
+        az webapp deploy --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --src-path ./application.zip --type zip
     - run: |
         az webapp log config --web-server-logging filesystem --name ${{vars.APP_SERVICE_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
         
