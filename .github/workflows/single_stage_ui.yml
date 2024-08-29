@@ -26,25 +26,22 @@ jobs:
       with:
         creds: ${{SECRETS.AZURE_SERVICE_PRINCIPAL_CRED}}
         auth-type: SERVICE_PRINCIPAL
-    - run: |
-        ls
-        pwd
-    - uses: actions/setup-node@v4.0.3
-      with:
-        node-version: v20.17.0
-    - run: |
-        npm install
-    - run: |
-        npm run build
-    - run: |
-        ls
-        pwd
+    # - run: |
+    #     ls
+    #     pwd
+    # - uses: actions/setup-node@v4.0.3
+    #   with:
+    #     node-version: v20.17.0
+    # - run: |
+    #     npm install
+    # - run: |
+    #     npm run build
     - run:
-        zip -rv  build.zip ./build package.json
+        zip -rv  application.zip ./public ./src package.json
     - run: |
-        az webapp config appsettings set --resource-group ${{vars.RESOURCE_GROUP_NAME}} --name "${{vars.APP_SERVICE_UI_NAME}}" --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false
-        az webapp config set --startup-file "serve -s build" --name ${{vars.APP_SERVICE_UI_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
+        az webapp config appsettings set --resource-group ${{vars.RESOURCE_GROUP_NAME}} --name "${{vars.APP_SERVICE_UI_NAME}}" --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
+        # az webapp config set --startup-file "serve -s build" --name ${{vars.APP_SERVICE_UI_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
     - run: |
-        az webapp deploy --name ${{vars.APP_SERVICE_UI_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --src-path ./build.zip --type zip
+        az webapp deploy --name ${{vars.APP_SERVICE_UI_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}} --src-path ./application.zip --type zip
     - run: |
         az webapp log config --web-server-logging filesystem --name ${{vars.APP_SERVICE_UI_NAME}} --resource-group  ${{vars.RESOURCE_GROUP_NAME}}
